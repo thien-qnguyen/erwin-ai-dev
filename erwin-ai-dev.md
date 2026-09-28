@@ -39,13 +39,57 @@ A lightweight, technology-agnostic AI development framework for software enginee
 - Prefer the smallest meaningful verification scope first, then widen only when justified.
 - If a change cannot be verified automatically, state that clearly instead of implying certainty.
 
-## Structure
+## Repository Structure
 
-- `erwin-agents/` — agent roles and operating rules.
+### Framework source
+
+- `erwin-agents/` — source agent roles and operating rules.
 - `erwin-workflows/` — deterministic development lifecycle definitions.
-- `erwin-skills/` — reusable capabilities selected by workflow stage and task context.
+- `erwin-skills/` — source skill definitions and framework-owned skill content.
 - `erwin-templates/` — reusable output and handoff formats.
+- `erwin-generators/` — prompts used to generate optional external tooling such as MCP servers.
 
-## Usage
+### Copilot distribution
 
-Use this repository as a reusable reference or copy only the pieces needed for a target project. The framework is intentionally generic and should not contain confidential project information, organisation-specific business rules, secrets, credentials, or private infrastructure details.
+- `erwin-copilot/agents/` — custom agents in VS Code/Copilot-compatible `.agent.md` format.
+- `erwin-copilot/skills/<name>/SKILL.md` — Agent Skills using the standard discoverable layout. Each skill's `name` matches its parent directory.
+- `erwin-install/` — local installation helpers and documentation.
+
+The distribution is intentionally separate from the source layout. This keeps framework-owned source files namespaced while allowing Copilot to consume the standard folder/file names it requires.
+
+## Recommended Personal Installation
+
+For personal reuse across workspaces, install the Copilot distribution into the user-level customization directories instead of copying framework files into each target repository.
+
+```powershell
+./erwin-install/install-copilot.ps1
+```
+
+This installs:
+
+```text
+~/.copilot/agents/erwin-developer.agent.md
+~/.copilot/skills/requirement-analysis/SKILL.md
+~/.copilot/skills/root-cause-analysis/SKILL.md
+~/.copilot/skills/impact-analysis/SKILL.md
+~/.copilot/skills/testing-strategy/SKILL.md
+~/.copilot/skills/verification/SKILL.md
+~/.copilot/skills/self-review/SKILL.md
+~/.copilot/skills/requirement-reconciliation/SKILL.md
+~/.copilot/skills/task-handoff/SKILL.md
+~/.copilot/skills/jira-issue/SKILL.md
+```
+
+After installation, open a new Copilot chat or reload VS Code and use `/agents` and `/skills` to verify discovery.
+
+## Agent Behavior
+
+`Erwin Developer` treats the Erwin workflow as its default development lifecycle and prefers installed Erwin skills at the relevant stages rather than inventing an ad-hoc process.
+
+Specialized skills act as entry points and compose with the core flow. For example, an exact Jira issue key can trigger `jira-issue`, which still uses the core requirement, impact, testing, verification, self-review, reconciliation, and handoff stages.
+
+Target-repository instructions and explicit user requirements remain authoritative when they conflict with generic framework guidance.
+
+## Public-Safe Scope
+
+Use this repository as a reusable framework. Do not add confidential project information, organisation-specific business rules, secrets, credentials, private infrastructure details, or proprietary source code.
